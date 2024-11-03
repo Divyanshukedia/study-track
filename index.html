@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Tracker - Add Log</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Start or Complete Study Session</h1>
+
+        <!-- Ongoing Session Display -->
+        <div id="open-session" style="display:none;">
+            <p>You have an ongoing session from <span id="ongoing-start-time"></span> for chapter <span id="ongoing-chapter"></span>.</p>
+            
+            <div class="form-group">
+                <label for="studyDescription">What did you study?</label>
+                <textarea id="studyDescription" rows="4" placeholder="Describe briefly what you studied..."></textarea>
+            </div>
+
+            <button class="btn" id="completeSessionBtn">Complete Ongoing Session</button>
+        </div>
+
+        <!-- New Session Form -->
+        <div id="new-session-form">
+            <div class="form-group">
+                <label for="chapter">Chapter</label>
+                <input type="text" id="chapter" placeholder="Enter chapter name">
+            </div>
+            
+            <div class="form-group">
+                <label for="startTime">Start Time</label>
+                <input type="datetime-local" id="startTime">
+            </div>
+            
+            <button class="btn" id="startSessionBtn">Start Study Session</button>
+        </div>
+        
+        <div class="nav-link">
+            <a href="analytics.html">Go to Analytics</a>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

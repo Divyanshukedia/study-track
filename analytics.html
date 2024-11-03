@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Tracker - Analytics</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="app.js"></script>
+
+</head>
+<body>
+    <div class="container">
+        <h1>Study Analytics</h1>
+
+        <div class="analytics">
+            <div id="totalStudyTime">Total Study Time: Calculating...</div>
+            <div id="averageStudyTime">Average Study Time: Calculating...</div>
+            <div id="currentStreak">Current Streak: Calculating...</div>
+        </div>
+
+        <canvas id="studyChart" width="400" height="200"></canvas>
+        
+        <h2>Study History</h2>
+        <table id="historyTable" border="1">
+            <thead>
+                <tr>
+                    <th>Chapter</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Duration (minutes)</th>
+                    <th>Summary</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- History will be injected here -->
+            </tbody>
+        </table>
+
+        <div class="nav-link">
+            <a href="index.html">Go to Add Log</a>
+        </div>
+    </div>
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
