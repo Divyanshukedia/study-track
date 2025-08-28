@@ -1,47 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Tracker - Add Log</title>
-    <link rel="stylesheet" href="style.css">
-    <script type="module" src="app.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CS Study Tracker</title>
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <style>
+    body {
+      background: #f8f9fa;
+    }
+    .card {
+      border-radius: 1rem;
+    }
+    .nav-link.active {
+      font-weight: bold;
+    }
+    .quiz-option {
+      cursor: pointer;
+    }
+    .quiz-option:hover {
+      background-color: #f1f1f1;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Start or Complete Study Session</h1>
-
-        <!-- Ongoing Session Display -->
-        <div id="open-session" style="display:none;">
-            <p>You have an ongoing session from <span id="ongoing-start-time"></span> for chapter <span id="ongoing-chapter"></span>.</p>
-            
-            <div class="form-group">
-                <label for="studyDescription">What did you study?</label>
-                <textarea id="studyDescription" rows="4" placeholder="Describe briefly what you studied..."></textarea>
-            </div>
-
-            <button class="btn" id="completeSessionBtn">Complete Ongoing Session</button>
-        </div>
-
-        <!-- New Session Form -->
-        <div id="new-session-form">
-            <div class="form-group">
-                <label for="chapter">Chapter</label>
-                <input type="text" id="chapter" placeholder="Enter chapter name">
-            </div>
-            
-            <div class="form-group">
-                <label for="startTime">Start Time</label>
-                <input type="datetime-local" id="startTime">
-            </div>
-            
-            <button class="btn" id="startSessionBtn">Start Study Session</button>
-        </div>
-        
-        <div class="nav-link">
-            <a href="analytics.html">Go to Analytics</a>
-        </div>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="#">📚 CS Study Tracker</a>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </nav>
+
+  <div class="container py-4">
+    <ul class="nav nav-tabs" id="mainTabs">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#dashboard">Dashboard</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#subjects">Subjects</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#quiz">Quizzes</a></li>
+    </ul>
+
+    <div class="tab-content mt-3">
+      <!-- Dashboard -->
+      <div class="tab-pane fade show active" id="dashboard">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="card shadow-sm">
+              <div class="card-body text-center">
+                <h5 class="card-title">Overall Progress</h5>
+                <h3 id="overallProgress">0%</h3>
+                <small id="progressDetails">0/0 chapters completed</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card shadow-sm">
+              <div class="card-body text-center">
+                <h5 class="card-title">Quizzes Taken</h5>
+                <h3 id="quizCount">0</h3>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card shadow-sm">
+              <div class="card-body text-center">
+                <h5 class="card-title">Due Today</h5>
+                <ul id="dueToday" class="list-group list-group-flush"></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subjects -->
+      <div class="tab-pane fade" id="subjects">
+        <div class="d-flex justify-content-between mb-3">
+          <h4>Your Subjects</h4>
+          <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#addSubjectModal"><i class="bi bi-plus-circle"></i> Add Subject</button>
+        </div>
+        <div id="subjectList" class="row g-3"></div>
+      </div>
+
+      <!-- Quizzes -->
+      <div class="tab-pane fade" id="quiz">
+        <div id="quizContainer" class="card shadow-sm d-none">
+          <div class="card-body">
+            <h5 id="quizQuestion"></h5>
+            <div id="quizOptions" class="list-group"></div>
+            <button class="btn btn-primary mt-3" id="nextQuestionBtn" disabled>Next</button>
+          </div>
+        </div>
+        <div id="quizSetup" class="text-center">
+          <h5>Select quiz type</h5>
+          <button class="btn btn-outline-primary m-2" id="chapterQuizBtn">Chapter Quiz</button>
+          <button class="btn btn-outline-success m-2" id="cumulativeQuizBtn">Cumulative Quiz</button>
+          <button class="btn btn-outline-danger m-2" id="subjectQuizBtn">Subject Mock Test</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Subject Modal -->
+  <div class="modal fade" id="addSubjectModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Subject</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" id="subjectName" class="form-control mb-2" placeholder="Subject Name">
+          <textarea id="chapterNames" class="form-control" rows="3" placeholder="Chapters (comma separated)"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn btn-primary" id="saveSubjectBtn">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+  // ===== Firebase Init =====
+  const firebaseConfig = {
+    apiKey: "AIzaSyDb12vAA2dtTPY7C3IB3RyidkoSHEn11VM",
+    authDomain: "cs-study-tracker.firebaseapp.com",
+    projectId: "cs-study-tracker",
+    storageBucket: "cs-study-tracker.firebasestorage.app",
+    messagingSenderId: "864017090980",
+    appId: "1:864017090980:web:8042e9b0b582c67a05d931",
+    measurementId: "G-WH3G73603V"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  let currentUser = null;
+
+  // Sign in anonymously and then load subjects
+  auth.signInAnonymously()
+    .then(cred => {
+      currentUser = cred.user; // ✅ get the user object
+      console.log("Signed in as:", currentUser.uid);
+      loadSubjects();
+    })
+    .catch(err => console.error("Auth error", err));
+
+  // ===== Subject Handling =====
+  const subjectList = document.getElementById('subjectList');
+  const saveSubjectBtn = document.getElementById('saveSubjectBtn');
+
+  saveSubjectBtn.addEventListener('click', async () => {
+    if (!currentUser) return alert("User not ready yet!");
+    const name = document.getElementById('subjectName').value.trim();
+    const chapters = document.getElementById('chapterNames').value
+      .split(',')
+      .map(c => c.trim())
+      .filter(c => c);
+
+    if (!name || chapters.length === 0) return;
+
+    await db.collection('users')
+      .doc(currentUser.uid)
+      .collection('subjects')
+      .add({
+        name,
+        chapters: chapters.map(ch => ({ name: ch, done: false }))
+      });
+
+    document.getElementById('subjectName').value = '';
+    document.getElementById('chapterNames').value = '';
+    bootstrap.Modal.getInstance(document.getElementById('addSubjectModal')).hide();
+
+    loadSubjects();
+  });
+
+  async function loadSubjects() {
+    if (!currentUser) return;
+    subjectList.innerHTML = '';
+    const snapshot = await db.collection('users')
+      .doc(currentUser.uid)
+      .collection('subjects')
+      .get();
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const card = document.createElement('div');
+      card.className = 'col-md-4';
+      card.innerHTML = `
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title">${data.name}</h5>
+            <ul class="list-group list-group-flush">
+              ${data.chapters.map((ch, i) => `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  ${ch.name}
+                  <input type="checkbox" ${ch.done ? 'checked' : ''} data-id="${doc.id}" data-index="${i}">
+                </li>`).join('')}
+            </ul>
+          </div>
+        </div>`;
+      subjectList.appendChild(card);
+    });
+  }
+
+  subjectList.addEventListener('change', async e => {
+    if (e.target.matches('input[type="checkbox"]')) {
+      const id = e.target.getAttribute('data-id');
+      const idx = e.target.getAttribute('data-index');
+      const ref = db.collection('users')
+        .doc(currentUser.uid)
+        .collection('subjects')
+        .doc(id);
+
+      const docSnap = await ref.get();
+      const data = docSnap.data();
+      data.chapters[idx].done = e.target.checked;
+      await ref.update({ chapters: data.chapters });
+      loadSubjects();
+    }
+  });
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
